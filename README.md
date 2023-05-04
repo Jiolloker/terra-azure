@@ -42,6 +42,7 @@ Select the desired subscription from the list of subscriptions.
 
 Copy the value of the "Subscription ID" field. This value is your subscription_id.
 ```
+These values, must be stored as variables in terraform cloud, store them as sensitive variables.
 
 Then, we need to give permissions to the client we created so it can access the resources in azure.
 ```
