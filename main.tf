@@ -19,7 +19,7 @@ resource "azurerm_resource_group" "rg" {
     name     = "eduit-rg"
     location = "eastus"
 }
-/*
+
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.project}-vnet"
   location            = azurerm_resource_group.rg.location
@@ -44,4 +44,4 @@ resource "azurerm_virtual_network" "vnet" {
   tags = {
     env = "prod"
   }
-}*/
+}
