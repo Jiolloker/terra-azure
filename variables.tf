@@ -39,3 +39,9 @@ variable "mysql_pwd" {
 variable "admin_ssh_key" {
   type = string
 }
+
+variable "prefix" {
+  type        = string
+  default     = "eduit"
+  description = "Prefix of the resource name"
+}
