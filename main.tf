@@ -5,7 +5,17 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.53.0"
     }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "~>3.0"
+    }
   }
+}
+
+resource "random_pet" "prefix" {
+  prefix = var.prefix
+  length = 1
 }
 
 provider "azurerm" {
