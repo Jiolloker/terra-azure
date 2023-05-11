@@ -167,7 +167,7 @@ resource "azurerm_network_interface" "mysql" {
 }
 
 resource "azurerm_mysql_server" "example" {
-  name                         = "mysql-server"
+  name                         = "mysql-server3pointdotcero"
   resource_group_name          = azurerm_resource_group.rg-desafio.name
   location                     = azurerm_resource_group.rg-desafio.location
   administrator_login          = var.mysql_id
@@ -218,7 +218,11 @@ resource "azurerm_linux_virtual_machine" "web_server_1" {
   admin_username       = var.admin_id
   admin_password       = var.admin_pwd
   computer_name        = "web-server-1"
-
+  #admin ssh
+  admin_ssh_key {
+    username   = var.admin_id
+    public_key = file("~/.ssh/my-key.pem.pub")
+  }
 
   source_image_reference {
     publisher = "Canonical"

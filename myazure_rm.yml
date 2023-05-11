@@ -1,0 +1,6 @@
+plugin: azure_rm
+include_vm_resource_groups:
+  - eduit-rg-desafio
+auth_source: auto
+keyed_groups:
+  - key: tags.approle
