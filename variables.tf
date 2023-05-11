@@ -35,3 +35,7 @@ variable "mysql_id" {
 variable "mysql_pwd" {
   type = string
 }
+
+variable "admin_ssh_key" {
+  type = string
+}

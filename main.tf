@@ -218,10 +218,10 @@ resource "azurerm_linux_virtual_machine" "web_server_1" {
   admin_username       = var.admin_id
   admin_password       = var.admin_pwd
   computer_name        = "web-server-1"
-  #admin ssh
+  #admin ssh key in terraform cloud
   admin_ssh_key {
     username   = var.admin_id
-    public_key = file("my-key.pem")
+    private_key = var.admin_ssh_key
   }
 
   source_image_reference {
