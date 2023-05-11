@@ -243,13 +243,6 @@ resource "azurerm_linux_virtual_machine" "web_server_1" {
     approle = "web-server"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update",
-      "sudo apt-get install -y apache2 php libapache2-mod-php php-mysql",
-      "sudo systemctl restart apache2"
-    ]
-  }
 }
 
 output "web_server_1_public_ip" {
