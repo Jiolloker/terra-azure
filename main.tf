@@ -221,7 +221,7 @@ resource "azurerm_linux_virtual_machine" "web_server_1" {
   #admin ssh key in terraform cloud
   admin_ssh_key {
     username   = var.admin_id
-    private_key = var.admin_ssh_key
+    public_key = var.admin_ssh_key
   }
 
   source_image_reference {
