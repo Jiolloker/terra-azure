@@ -221,7 +221,7 @@ resource "azurerm_linux_virtual_machine" "web_server_1" {
   #admin ssh
   admin_ssh_key {
     username   = var.admin_id
-    public_key = file("~/.ssh/my-key.pem.pub")
+    public_key = file("my-key.pem")
   }
 
   source_image_reference {
