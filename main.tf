@@ -236,6 +236,7 @@ resource "azurerm_linux_virtual_machine" "web_server_1" {
 
   tags = {
     environment = "dev"
+    approle = "web-server"
   }
 
   provisioner "remote-exec" {
