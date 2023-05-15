@@ -1,256 +1,115 @@
-# Random Prefix
-resource "random_pet" "prefix" {
-  prefix = var.prefix
-  length = 1
-}
-
-# Resource Group
-resource "azurerm_resource_group" "rg-desafio" {
-  name     = "eduit-rg-desafio"
+# Define the resource group
+resource "azurerm_resource_group" "desafio" {
+  name     = "desafio-resource-group"
   location = "eastus"
 }
 
-# Virtual Network
-resource "azurerm_virtual_network" "vnet" {
-  name                = "${var.project}-vnet"
-  location            = azurerm_resource_group.rg-desafio.location
-  resource_group_name = azurerm_resource_group.rg-desafio.name
+# Define the virtual network
+resource "azurerm_virtual_network" "desafio-vnet" {
+  name                = "desafio-vnet"
   address_space       = ["10.0.0.0/16"]
-
-  tags = {
-    env = "dev"
-  }
+  location            = azurerm_resource_group.desafio.location
+  resource_group_name = azurerm_resource_group.desafio.name
 }
 
-# Subnets
-resource "azurerm_subnet" "web" {
-  name                 = "web-subnet"
-  resource_group_name  = azurerm_resource_group.rg-desafio.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
+# Define the subnet
+resource "azurerm_subnet" "desafio-subnet" {
+  name                 = "desafio-subnet"
+  resource_group_name  = azurerm_resource_group.desafio.name
+  virtual_network_name = azurerm_virtual_network.desafio-vnet.name
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-resource "azurerm_subnet" "mysql" {
-  name                 = "mysql-subnet"
-  resource_group_name  = azurerm_resource_group.rg-desafio.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.2.0/24"]
-}
-
-
-# Network Security Group
-resource "azurerm_network_security_group" "rg-desafio" {
-  name                = "desafio-nsg"
-  location            = azurerm_resource_group.rg-desafio.location
-  resource_group_name = azurerm_resource_group.rg-desafio.name
-}
-
-# Network Security Rules ##############################
-resource "azurerm_network_security_rule" "http" {
-  name                        = "http"
-  priority                    = 100
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "80"
-  source_address_prefix       = "*"
-  destination_address_prefix  = azurerm_subnet.web.address_prefixes[0]
-  resource_group_name         = azurerm_resource_group.rg-desafio.name
-  network_security_group_name = azurerm_network_security_group.rg-desafio.name
-}
-
-resource "azurerm_network_security_rule" "ssh" {
-  name                        = "ssh"
-  priority                    = 101
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "22"
-  source_address_prefix       = "*"
-  destination_address_prefix  = azurerm_subnet.web.address_prefixes[0]
-  resource_group_name         = azurerm_resource_group.rg-desafio.name
-  network_security_group_name = azurerm_network_security_group.rg-desafio.name
-}
-
-resource "azurerm_network_security_rule" "mysql" {
-  name                        = "mysql"
-  priority                    = 102
-  direction                   = "Inbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "3306"
-  source_address_prefix       = azurerm_subnet.web.address_prefixes[0]
-  destination_address_prefix  = azurerm_subnet.mysql.address_prefixes[0]
-  resource_group_name         = azurerm_resource_group.rg-desafio.name
-  network_security_group_name = azurerm_network_security_group.rg-desafio.name
-}
-
-
-resource "azurerm_network_security_rule" "mysql_outbound" {
-  name                        = "mysql_outbound"
-  priority                    = 101
-  direction                   = "Outbound"
-  access                      = "Allow"
-  protocol                    = "Tcp"
-  source_port_range           = "*"
-  destination_port_range      = "3306"
-  source_address_prefix       = azurerm_subnet.mysql.address_prefixes[0]
-  destination_address_prefix  = azurerm_subnet.web.address_prefixes[0]
-  resource_group_name         = azurerm_resource_group.rg-desafio.name
-  network_security_group_name = azurerm_network_security_group.rg-desafio.name
-}
-
-# Network Security Rules ##############################
-
-
-/*
-resource "azurerm_network_interface" "web_nic" {
-  name                = "web-nic"
-  location            = azurerm_resource_group.rg-desafio.location
-  resource_group_name = azurerm_resource_group.rg-desafio.name
+# Define the network interface template
+resource "azurerm_network_interface" "desafio_template" {
+  name                = "desafio-nic-template"
+  location            = azurerm_resource_group.desafio.location
+  resource_group_name = azurerm_resource_group.desafio.name
 
   ip_configuration {
-    name                          = "web-ipconfig"
-    subnet_id                     = azurerm_subnet.web.id
-    private_ip_address_allocation = "Dynamic"
-  }
-
-  tags = {
-    environment = "dev"
-  }
-}
-
-resource "azurerm_linux_virtual_machine" "web" {
-  name                = "web-vm"
-  resource_group_name = azurerm_resource_group.rg-desafio.name
-  location            = azurerm_resource_group.rg-desafio.location
-  size                = "Standard_B1s"
-  admin_username      = var.admin_id
-  admin_password        = var.admin_pwd
-  network_interface_ids = [azurerm_network_interface.web_nic.id]
-
-  admin_ssh_key {
-    username   = "adminuser"
-    public_key = file("~/.ssh/my-key.pem.pub")
-  }
-
-  os_disk {
-    name                 = "web-osdisk"
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "20.04-LTS"
-    version   = "latest"
-  }
-}*/
-
-
-# MySQL Server NIC
-resource "azurerm_network_interface" "mysql" {
-  name                = "mysql-nic"
-  resource_group_name = azurerm_resource_group.rg-desafio.name
-  location            = azurerm_resource_group.rg-desafio.location
-  ip_configuration {
-    name                          = "mysql-ipconfig"
-    subnet_id                     = azurerm_subnet.mysql.id
+    name                          = "desafio-ipconfig"
+    subnet_id                     = azurerm_subnet.desafio-subnet.id
     private_ip_address_allocation = "Dynamic"
   }
 }
 
-# MySQL Server
-resource "azurerm_mysql_server" "example" {
-  name                         = "mysql-server3pointdotcero"
-  resource_group_name          = azurerm_resource_group.rg-desafio.name
-  location                     = azurerm_resource_group.rg-desafio.location
-  administrator_login          = var.mysql_id
-  administrator_login_password = var.mysql_pwd
-  version                      = "5.7"
-
-  sku_name   = "B_Gen5_1"
-  storage_mb = 32768
-  geo_redundant_backup_enabled      = false
-  infrastructure_encryption_enabled = false
-  public_network_access_enabled     = true
-  ssl_enforcement_enabled           = true
-  ssl_minimal_tls_version_enforced  = "TLS1_2"
-  tags = {
-    environment = "dev"
-  }
-}
-
-## Public IP
-resource "azurerm_public_ip" "my_terraform_public_ip" {
-  name                = "${random_pet.prefix.id}-public-ip"
-  location            = azurerm_resource_group.rg-desafio.location
-  resource_group_name = azurerm_resource_group.rg-desafio.name
+# Define the public IP address
+resource "azurerm_public_ip" "desafio-publicip" {
+  name                = "desafio-publicip"
+  location            = azurerm_resource_group.desafio.location
+  resource_group_name = azurerm_resource_group.desafio.name
   allocation_method   = "Dynamic"
 }
 
-# Load Balancer
-resource "azurerm_lb" "lb" {
-  name                = "lb"
-  resource_group_name = azurerm_resource_group.rg-desafio.name
-  location            = azurerm_resource_group.rg-desafio.location
-  sku                 = "Basic"
+# Define the load balancer
+resource "azurerm_lb" "desafio-lb" {
+  name                = "desafio-lb"
+  location            = azurerm_resource_group.desafio.location
+  resource_group_name = azurerm_resource_group.desafio.name
+
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
-    public_ip_address_id = azurerm_public_ip.my_terraform_public_ip.id
-  }
-
-  backend_address_pool {
-    name                          = "lb-backend"
+    public_ip_address_id = azurerm_public_ip.desafio-publicip.id
   }
 }
 
-
-# WEB NIC
-resource "azurerm_network_interface" "web_nic_1" {
-  name                = "web-nic-1"
-  location            = azurerm_resource_group.rg-desafio.location
-  resource_group_name = azurerm_resource_group.rg-desafio.name
-
-  ip_configuration {
-    name                          = "web-ipconfig"
-    subnet_id                     = azurerm_subnet.web.id
-    private_ip_address_allocation = "Dynamic"
-    load_balancer_backend_address_pool_ids = [azurerm_lb.lb.backend_address_pool_ids[0]]
-    /*
-    public_ip_address_id = azurerm_public_ip.my_terraform_public_ip.id*/
-  }
-
-  tags = {
-    environment = "dev"
-  }
+# Define the backend pool
+resource "azurerm_lb_backend_address_pool" "desafio" {
+  name            = "desafio-backendpool"
+  resource_group_name = azurerm_resource_group.desafio.name
+  loadbalancer_id = azurerm_lb.desafio-lb.id
 }
 
-# Associate NSG to NIC
-resource "azurerm_network_interface_security_group_association" "example" {
-  network_interface_id      = azurerm_network_interface.web_nic_1.id
-  network_security_group_id = azurerm_network_security_group.rg-desafio.id
+# Define the probe
+resource "azurerm_lb_probe" "desafio" {
+  name                = "desafio-probe"
+  resource_group_name = azurerm_resource_group.desafio.name
+  loadbalancer_id     = azurerm_lb.desafio-lb.id
+  protocol            = "Tcp"
+  port                = 80
+  interval_in_seconds = 15
+  number_of_probes    = 2
 }
 
-# WEB VM
-resource "azurerm_linux_virtual_machine" "web_server_1" {
-  name                  = "web-server-1"
-  location            = azurerm_resource_group.rg-desafio.location
-  resource_group_name = azurerm_resource_group.rg-desafio.name
-  network_interface_ids = [azurerm_network_interface.web_nic_1.id]
+# Define the load balancer rule
+resource "azurerm_lb_rule" "desafio" {
+  name                           = "desafio-lbrule"
+  resource_group_name            = azurerm_resource_group.desafio.name
+  loadbalancer_id                = azurerm_lb.desafio-lb.id
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.desafio.id
+  backend_port                   = 80
+  frontend_ip_configuration_name = azurerm_lb.desafio-lb.frontend_ip_configuration[0].name
+  frontend_port = 80
+  protocol      = "Tcp"
+  probe_id      = azurerm_lb_probe.desafio.id
+  }
 
+# Associate the network interface with the load balancer backend pool
+resource "azurerm_network_interface_backend_address_pool_association" "web_nic_lb_associate" {
+  network_interface_id    = azurerm_network_interface.desafio_template.id
+  ip_configuration_name   = azurerm_network_interface.desafio_template.ip_configuration[0].name
+  backend_address_pool_id = azurerm_lb_backend_address_pool.desafio.id
+}
+
+# Create the web servers and associate them with the load balancer backend pool
+resource "azurerm_linux_virtual_machine" "desafio_web_server" {
+  count                = var.web_server_count
+  name                 = "desafio-web-server-${count.index}"
+  location             = azurerm_resource_group.desafio.location
+  resource_group_name  = azurerm_resource_group.desafio.name
   size                 = "Standard_B1s"
-  admin_username       = var.admin_id
-  admin_password       = var.admin_pwd
-  computer_name        = "web-server-1"
-  #admin ssh key in terraform cloud
+  admin_username       = "adminuser"
+  network_interface_ids = [azurerm_network_interface.desafio_template.id]
+
   admin_ssh_key {
-    username   = var.admin_id
+    username   = "adminuser"
     public_key = var.admin_ssh_key
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb      = 30
   }
 
   source_image_reference {
@@ -260,16 +119,8 @@ resource "azurerm_linux_virtual_machine" "web_server_1" {
     version   = "latest"
   }
 
-  os_disk {
-    name              = "web-server-osdisk-1"
-    caching           = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-    disk_size_gb      = 30
-  }
-
   tags = {
     environment = "dev"
     approle = "web-server"
   }
-
 }

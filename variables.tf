@@ -1,3 +1,4 @@
+# Credentials
 variable "subscription_id" {
   type = string
 }
@@ -14,34 +15,12 @@ variable "tenant_id" {
   type = string
 }
 
-variable "project" {
-  type = string
-}
-
-variable "admin_id" {
-  type = string
-}
-
-variable "admin_pwd" {
-  type = string
-}
-
-
-
-variable "mysql_id" {
-  type = string
-}
-
-variable "mysql_pwd" {
-  type = string
+# Define the number of web servers to create
+variable "web_server_count" {
+  type    = number
+  default = 3
 }
 
 variable "admin_ssh_key" {
   type = string
-}
-
-variable "prefix" {
-  type        = string
-  default     = "eduit"
-  description = "Prefix of the resource name"
 }
