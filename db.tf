@@ -17,7 +17,6 @@ resource "azurerm_mysql_server" "db-server" {
 
 
   storage_mb                        = 32768 # Specify the desired storage size
-  backup_retention_days             = 0     # Specify the desired backup retention period
   auto_grow_enabled                 = false
   geo_redundant_backup_enabled      = false
   infrastructure_encryption_enabled = false
