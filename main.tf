@@ -58,6 +58,10 @@ resource "azurerm_lb" "desafio-lb" {
 resource "azurerm_lb_backend_address_pool" "desafio" {
   name            = "desafio-backendpool"
   loadbalancer_id = azurerm_lb.desafio-lb.id
+  backend_addresses = [
+    for vm in azurerm_linux_virtual_machine.desafio_web_server :
+    azurerm_network_interface.desafio_template[vm.count_index].private_ip_address
+  ]
 }
 
 # Define the probe
@@ -82,8 +86,9 @@ resource "azurerm_lb_rule" "desafio" {
 
 # Associate the network interface with the load balancer backend pool
 resource "azurerm_network_interface_backend_address_pool_association" "web_nic_lb_associate" {
-  network_interface_id    = azurerm_network_interface.desafio_template.id
-  ip_configuration_name   = azurerm_network_interface.desafio_template.ip_configuration[0].name
+  count                   = var.web_server_count
+  network_interface_id    = azurerm_network_interface.desafio_template[count.index].id
+  ip_configuration_name   = azurerm_network_interface.desafio_template[count.index].ip_configuration[0].name
   backend_address_pool_id = azurerm_lb_backend_address_pool.desafio.id
 }
 
