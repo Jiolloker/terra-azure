@@ -115,6 +115,7 @@ resource "azurerm_linux_virtual_machine" "desafio_web_server" {
   }
 
   tags = {
+    terraform   = "true"
     environment = "dev"
     approle     = "web-server"
   }

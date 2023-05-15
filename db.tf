@@ -28,6 +28,12 @@ resource "azurerm_mysql_server" "db-server" {
 
   administrator_login          = "adminuser" # Replace with your desired admin username
   administrator_login_password = var.db-pwd  # Replace with your desired admin password
+
+  tags = {
+    terraform   = "true"
+    environment = "dev"
+    db = "mysql"
+  }
 }
 
 
