@@ -1,33 +1,8 @@
-# Provider: Azure
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "3.53.0"
-    }
-
-    random = {
-      source  = "hashicorp/random"
-      version = "~>3.0"
-    }
-  }
-}
-
+# Random Prefix
 resource "random_pet" "prefix" {
   prefix = var.prefix
   length = 1
 }
-
-provider "azurerm" {
-  subscription_id = var.subscription_id
-  client_id       = var.client_id
-  client_secret   = var.client_secret
-  tenant_id       = var.tenant_id
-  features {}
-}
-
-
-
 
 # Resource Group
 resource "azurerm_resource_group" "rg-desafio" {
@@ -70,6 +45,7 @@ resource "azurerm_network_security_group" "rg-desafio" {
   resource_group_name = azurerm_resource_group.rg-desafio.name
 }
 
+# Network Security Rules ##############################
 resource "azurerm_network_security_rule" "http" {
   name                        = "http"
   priority                    = 100
@@ -126,6 +102,10 @@ resource "azurerm_network_security_rule" "mysql_outbound" {
   resource_group_name         = azurerm_resource_group.rg-desafio.name
   network_security_group_name = azurerm_network_security_group.rg-desafio.name
 }
+
+# Network Security Rules ##############################
+
+
 /*
 resource "azurerm_network_interface" "web_nic" {
   name                = "web-nic"
@@ -171,7 +151,8 @@ resource "azurerm_linux_virtual_machine" "web" {
   }
 }*/
 
-# MySQL Server
+
+# MySQL Server NIC
 resource "azurerm_network_interface" "mysql" {
   name                = "mysql-nic"
   resource_group_name = azurerm_resource_group.rg-desafio.name
@@ -183,6 +164,7 @@ resource "azurerm_network_interface" "mysql" {
   }
 }
 
+# MySQL Server
 resource "azurerm_mysql_server" "example" {
   name                         = "mysql-server3pointdotcero"
   resource_group_name          = azurerm_resource_group.rg-desafio.name
@@ -203,6 +185,13 @@ resource "azurerm_mysql_server" "example" {
   }
 }
 
+## Public IP
+resource "azurerm_public_ip" "my_terraform_public_ip" {
+  name                = "${random_pet.prefix.id}-public-ip"
+  location            = azurerm_resource_group.rg-desafio.location
+  resource_group_name = azurerm_resource_group.rg-desafio.name
+  allocation_method   = "Dynamic"
+}
 
 # Load Balancer
 resource "azurerm_lb" "lb" {
@@ -214,23 +203,14 @@ resource "azurerm_lb" "lb" {
     name                 = "PublicIPAddress"
     public_ip_address_id = azurerm_public_ip.my_terraform_public_ip.id
   }
+
+  backend_address_pool {
+    name                          = "lb-backend"
+  }
 }
 
-resource "azurerm_lb_backend_address_pool" "web" {
-  loadbalancer_id     = azurerm_lb.lb.id
-  name                = "web-backend-pool"
-}
 
-
-
-## WEB SERVERS
-resource "azurerm_public_ip" "my_terraform_public_ip" {
-  name                = "${random_pet.prefix.id}-public-ip"
-  location            = azurerm_resource_group.rg-desafio.location
-  resource_group_name = azurerm_resource_group.rg-desafio.name
-  allocation_method   = "Dynamic"
-}
-
+# WEB NIC
 resource "azurerm_network_interface" "web_nic_1" {
   name                = "web-nic-1"
   location            = azurerm_resource_group.rg-desafio.location
@@ -240,7 +220,9 @@ resource "azurerm_network_interface" "web_nic_1" {
     name                          = "web-ipconfig"
     subnet_id                     = azurerm_subnet.web.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id = azurerm_public_ip.my_terraform_public_ip.id
+    load_balancer_backend_address_pool_ids = [azurerm_lb.lb.backend_address_pool_ids[0]]
+    /*
+    public_ip_address_id = azurerm_public_ip.my_terraform_public_ip.id*/
   }
 
   tags = {
@@ -248,11 +230,13 @@ resource "azurerm_network_interface" "web_nic_1" {
   }
 }
 
+# Associate NSG to NIC
 resource "azurerm_network_interface_security_group_association" "example" {
   network_interface_id      = azurerm_network_interface.web_nic_1.id
   network_security_group_id = azurerm_network_security_group.rg-desafio.id
 }
 
+# WEB VM
 resource "azurerm_linux_virtual_machine" "web_server_1" {
   name                  = "web-server-1"
   location            = azurerm_resource_group.rg-desafio.location
@@ -288,12 +272,4 @@ resource "azurerm_linux_virtual_machine" "web_server_1" {
     approle = "web-server"
   }
 
-}
-
-output "web_server_1_public_ip" {
-  value = azurerm_network_interface.web_nic_1.id
-}
-
-output "mysql_server_public_ip" {
-  value = azurerm_mysql_server.example.id
 }
