@@ -1,6 +1,11 @@
 plugin: azure_rm
+auth_source: env
 include_vm_resource_groups:
-  - eduit-rg-desafio
-auth_source: auto
+  - desafio-resource-group
+
 keyed_groups:
   - key: tags.approle
+
+myhost:
+  ansible_user: adminuser
+  ansible_ssh_private_key_file: /ubuntu/.ssh/my-key.pem
