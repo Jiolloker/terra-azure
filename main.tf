@@ -56,19 +56,15 @@ resource "azurerm_lb" "desafio-lb" {
 # Define the backend pool
 resource "azurerm_lb_backend_address_pool" "desafio" {
   name            = "desafio-backendpool"
-  resource_group_name = azurerm_resource_group.desafio.name
   loadbalancer_id = azurerm_lb.desafio-lb.id
 }
 
 # Define the probe
 resource "azurerm_lb_probe" "desafio" {
   name                = "desafio-probe"
-  resource_group_name = azurerm_resource_group.desafio.name
   loadbalancer_id     = azurerm_lb.desafio-lb.id
   protocol            = "Tcp"
   port                = 80
-  interval_in_seconds = 15
-  number_of_probes    = 2
 }
 
 # Define the load balancer rule
