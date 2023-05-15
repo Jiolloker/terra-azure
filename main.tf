@@ -92,18 +92,6 @@ resource "azurerm_lb_rule" "desafio-2" {
   probe_id                       = azurerm_lb_probe.desafio.id
 }
 
-resource "azurerm_lb_rule" "desafio-3" {
-  name                           = "ICMP-inbound-rule"
-  loadbalancer_id                = azurerm_lb.desafio-lb.id
-  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.desafio.id]
-  backend_port                   = 22
-  frontend_ip_configuration_name = azurerm_lb.desafio-lb.frontend_ip_configuration[0].name
-  frontend_port                  = 22
-  protocol                       = "Tcp"
-  probe_id                       = azurerm_lb_probe.desafio.id
-}
-
-
 
 # Associate the network interface with the load balancer backend pool
 resource "azurerm_network_interface_backend_address_pool_association" "web_nic_lb_associate" {
