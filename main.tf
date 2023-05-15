@@ -58,10 +58,6 @@ resource "azurerm_lb" "desafio-lb" {
 resource "azurerm_lb_backend_address_pool" "desafio" {
   name            = "desafio-backendpool"
   loadbalancer_id = azurerm_lb.desafio-lb.id
-  virtual_network_id = [
-    for vm in azurerm_linux_virtual_machine.desafio_web_server :
-    azurerm_network_interface.desafio_template[vm.count_index].private_ip_address
-  ]
 }
 
 # Define the probe
@@ -87,8 +83,8 @@ resource "azurerm_lb_rule" "desafio" {
 # Associate the network interface with the load balancer backend pool
 resource "azurerm_network_interface_backend_address_pool_association" "web_nic_lb_associate" {
   count                   = var.web_server_count
-  network_interface_id    = azurerm_network_interface.desafio_template[count.index].id
-  ip_configuration_name   = azurerm_network_interface.desafio_template[count.index].ip_configuration[0].name
+  network_interface_id    = azurerm_network_interface.desafio_template.*.id[count.index]
+  ip_configuration_name   = azurerm_network_interface.desafio_template.*.ip_configuration.0.name[count.index]
   backend_address_pool_id = azurerm_lb_backend_address_pool.desafio.id
 }
 
@@ -100,14 +96,15 @@ resource "azurerm_linux_virtual_machine" "desafio_web_server" {
   resource_group_name   = azurerm_resource_group.desafio.name
   size                  = "Standard_B1s"
   admin_username        = "adminuser"
-  network_interface_ids = [azurerm_network_interface.desafio_template[count.index].id]
-
+  network_interface_ids = ["${element(azurerm_network_interface.desafio_template.*.id, count.index)}"]
+  
   admin_ssh_key {
     username   = "adminuser"
     public_key = var.admin_ssh_key
   }
 
   os_disk {
+    name                 = "disk${count.index}"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
     disk_size_gb         = 30
@@ -127,3 +124,30 @@ resource "azurerm_linux_virtual_machine" "desafio_web_server" {
   }
 }
 
+# Create Network Security Group and rule
+resource "azurerm_network_security_group" "desafio-nsg" {
+  name                = "desafio-nsg"
+  location            = azurerm_resource_group.desafio.location
+  resource_group_name = azurerm_resource_group.desafio.name
+
+
+  #Add rule for Inbound Access
+  security_rule {
+    name                       = "SSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+
+#Connect NSG to Subnet
+resource "azurerm_subnet_network_security_group_association" "desafio-nsg-assoc" {
+  subnet_id                 = azurerm_subnet.desafio-subnet.id
+  network_security_group_id = azurerm_network_security_group.desafio-nsg.id
+}
