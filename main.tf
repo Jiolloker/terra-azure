@@ -102,15 +102,32 @@ resource "azurerm_network_interface_backend_address_pool_association" "web_nic_l
   backend_address_pool_id = azurerm_lb_backend_address_pool.desafio.id
 }
 
+#Availability Set - Fault Domains [Rack Resilience]
+resource "azurerm_availability_set" "vmavset-x1" {
+  name                         = "vmavset"
+  location                     = azurerm_resource_group.desafio.location
+  resource_group_name          = azurerm_resource_group.desafio.name
+  platform_fault_domain_count  = 2
+  platform_update_domain_count = 2
+  managed                      = true
+  tags = {
+    terraform = "true"
+    environment = "dev"
+  }
+}
+
 # Create the web servers and associate them with the load balancer backend pool
 resource "azurerm_linux_virtual_machine" "desafio_web_server" {
   count                 = var.web_server_count
   name                  = "desafio-web-server-${count.index}"
+  availability_set_id   = azurerm_availability_set.vmavset-x1.id
   location              = azurerm_resource_group.desafio.location
   resource_group_name   = azurerm_resource_group.desafio.name
   size                  = "Standard_B1s"
   admin_username        = "adminuser"
   network_interface_ids = ["${element(azurerm_network_interface.desafio_template.*.id, count.index)}"]
+  disable_password_authentication = true
+  computer_name                   = "linux-vm${count.index}"
 
   admin_ssh_key {
     username   = "adminuser"
