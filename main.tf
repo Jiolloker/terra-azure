@@ -58,7 +58,7 @@ resource "azurerm_lb" "desafio-lb" {
 resource "azurerm_lb_backend_address_pool" "desafio" {
   name            = "desafio-backendpool"
   loadbalancer_id = azurerm_lb.desafio-lb.id
-  backend_addresses = [
+  virtual_network_id = [
     for vm in azurerm_linux_virtual_machine.desafio_web_server :
     azurerm_network_interface.desafio_template[vm.count_index].private_ip_address
   ]
