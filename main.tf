@@ -72,7 +72,6 @@ resource "azurerm_lb_probe" "desafio" {
 resource "azurerm_lb_rule" "desafio-1" {
   name                           = "desafio-lbrule"
   loadbalancer_id                = azurerm_lb.desafio-lb.id
-  resource_group_name            = azurerm_resource_group.desafio.name
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.desafio.id]
   backend_port                   = 80
   frontend_ip_configuration_name = azurerm_lb.desafio-lb.frontend_ip_configuration[0].name
@@ -85,7 +84,6 @@ resource "azurerm_lb_rule" "desafio-1" {
 resource "azurerm_lb_rule" "desafio-2" {
   name                           = "ssh-inbound-rule"
   loadbalancer_id                = azurerm_lb.desafio-lb.id
-  resource_group_name            = azurerm_resource_group.desafio.name
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.desafio.id]
   backend_port                   = 22
   frontend_ip_configuration_name = azurerm_lb.desafio-lb.frontend_ip_configuration[0].name
