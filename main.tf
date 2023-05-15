@@ -64,14 +64,16 @@ resource "azurerm_lb_backend_address_pool" "desafio" {
 resource "azurerm_lb_probe" "desafio" {
   name            = "desafio-probe"
   loadbalancer_id = azurerm_lb.desafio-lb.id
+  resource_group_name = azurerm_resource_group.desafio.name
   protocol        = "Tcp"
-  port            = 80
+  port            = 22
 }
 
 # Define the load balancer rule
 resource "azurerm_lb_rule" "desafio" {
   name                           = "desafio-lbrule"
   loadbalancer_id                = azurerm_lb.desafio-lb.id
+  resource_group_name            = azurerm_resource_group.desafio.name
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.desafio.id]
   backend_port                   = 80
   frontend_ip_configuration_name = azurerm_lb.desafio-lb.frontend_ip_configuration[0].name
@@ -79,6 +81,21 @@ resource "azurerm_lb_rule" "desafio" {
   protocol                       = "Tcp"
   probe_id                       = azurerm_lb_probe.desafio.id
 }
+
+# Define the load balancer rule for ssh
+resource "azurerm_lb_rule" "desafio" {
+  name                           = "ssh-inbound-rule"
+  loadbalancer_id                = azurerm_lb.desafio-lb.id
+  resource_group_name            = azurerm_resource_group.desafio.name
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.desafio.id]
+  backend_port                   = 22
+  frontend_ip_configuration_name = azurerm_lb.desafio-lb.frontend_ip_configuration[0].name
+  frontend_port                  = 22
+  protocol                       = "Tcp"
+  probe_id                       = azurerm_lb_probe.desafio.id
+}
+
+
 
 # Associate the network interface with the load balancer backend pool
 resource "azurerm_network_interface_backend_address_pool_association" "web_nic_lb_associate" {
@@ -97,7 +114,7 @@ resource "azurerm_linux_virtual_machine" "desafio_web_server" {
   size                  = "Standard_B1s"
   admin_username        = "adminuser"
   network_interface_ids = ["${element(azurerm_network_interface.desafio_template.*.id, count.index)}"]
-  
+
   admin_ssh_key {
     username   = "adminuser"
     public_key = var.admin_ssh_key
