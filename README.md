@@ -52,3 +52,8 @@ Firstly, specify a Role which grants the appropriate permissions needed for the 
 
 Secondly, search for and select the name of the client created in Azure Active Directory to assign it this role - then press Save.
 ```
+
+
+
+Current infra diagram
+https://app.diagrams.net/#G1dEtuOnt5_SV-WMKldVLZSnGoVQf9RGvC
