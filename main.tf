@@ -22,12 +22,13 @@ resource "azurerm_subnet" "desafio-subnet" {
 
 # Define the network interface template
 resource "azurerm_network_interface" "desafio_template" {
-  name                = "desafio-nic-template"
+  count               = var.web_server_count
+  name                = "desafio-nic-template-${count.index}"
   location            = azurerm_resource_group.desafio.location
   resource_group_name = azurerm_resource_group.desafio.name
 
   ip_configuration {
-    name                          = "desafio-ipconfig"
+    name                          = "desafio-ipconfig-${count.index}"
     subnet_id                     = azurerm_subnet.desafio-subnet.id
     private_ip_address_allocation = "Dynamic"
   }
@@ -94,7 +95,7 @@ resource "azurerm_linux_virtual_machine" "desafio_web_server" {
   resource_group_name   = azurerm_resource_group.desafio.name
   size                  = "Standard_B1s"
   admin_username        = "adminuser"
-  network_interface_ids = [azurerm_network_interface.desafio_template.id]
+  network_interface_ids = [azurerm_network_interface.desafio_template[count.index].id]
 
   admin_ssh_key {
     username   = "adminuser"
