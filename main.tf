@@ -186,18 +186,6 @@ resource "azurerm_network_security_group" "desafio-nsg" {
     destination_address_prefix = "*"
   }
 
-    # Add rule for Inbound ICMP (Ping) access
-  security_rule {
-    name                       = "ICMP"
-    priority                   = 1002
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "icmp"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
 }
 
 
