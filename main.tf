@@ -104,7 +104,7 @@ resource "azurerm_linux_virtual_machine" "desafio_web_server" {
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
-    disk_size_gb         = 20
+    disk_size_gb         = 30
   }
 
   source_image_reference {
