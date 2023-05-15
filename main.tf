@@ -61,23 +61,23 @@ resource "azurerm_lb_backend_address_pool" "desafio" {
 
 # Define the probe
 resource "azurerm_lb_probe" "desafio" {
-  name                = "desafio-probe"
-  loadbalancer_id     = azurerm_lb.desafio-lb.id
-  protocol            = "Tcp"
-  port                = 80
+  name            = "desafio-probe"
+  loadbalancer_id = azurerm_lb.desafio-lb.id
+  protocol        = "Tcp"
+  port            = 80
 }
 
 # Define the load balancer rule
 resource "azurerm_lb_rule" "desafio" {
   name                           = "desafio-lbrule"
   loadbalancer_id                = azurerm_lb.desafio-lb.id
-  backend_address_pool_ids        = [azurerm_lb_backend_address_pool.desafio.id]
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.desafio.id]
   backend_port                   = 80
   frontend_ip_configuration_name = azurerm_lb.desafio-lb.frontend_ip_configuration[0].name
-  frontend_port = 80
-  protocol      = "Tcp"
-  probe_id      = azurerm_lb_probe.desafio.id
-  }
+  frontend_port                  = 80
+  protocol                       = "Tcp"
+  probe_id                       = azurerm_lb_probe.desafio.id
+}
 
 # Associate the network interface with the load balancer backend pool
 resource "azurerm_network_interface_backend_address_pool_association" "web_nic_lb_associate" {
@@ -88,12 +88,12 @@ resource "azurerm_network_interface_backend_address_pool_association" "web_nic_l
 
 # Create the web servers and associate them with the load balancer backend pool
 resource "azurerm_linux_virtual_machine" "desafio_web_server" {
-  count                = var.web_server_count
-  name                 = "desafio-web-server-${count.index}"
-  location             = azurerm_resource_group.desafio.location
-  resource_group_name  = azurerm_resource_group.desafio.name
-  size                 = "Standard_B1s"
-  admin_username       = "adminuser"
+  count                 = var.web_server_count
+  name                  = "desafio-web-server-${count.index}"
+  location              = azurerm_resource_group.desafio.location
+  resource_group_name   = azurerm_resource_group.desafio.name
+  size                  = "Standard_B1s"
+  admin_username        = "adminuser"
   network_interface_ids = [azurerm_network_interface.desafio_template.id]
 
   admin_ssh_key {
@@ -104,7 +104,7 @@ resource "azurerm_linux_virtual_machine" "desafio_web_server" {
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
-    disk_size_gb      = 30
+    disk_size_gb         = 30
   }
 
   source_image_reference {
@@ -116,6 +116,7 @@ resource "azurerm_linux_virtual_machine" "desafio_web_server" {
 
   tags = {
     environment = "dev"
-    approle = "web-server"
+    approle     = "web-server"
   }
 }
+

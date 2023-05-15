@@ -24,3 +24,7 @@ variable "web_server_count" {
 variable "admin_ssh_key" {
   type = string
 }
+
+variable "db-pwd" {
+  type = string
+}
