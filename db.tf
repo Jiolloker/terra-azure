@@ -1,7 +1,7 @@
 # Define the resource group
 resource "azurerm_resource_group" "db-rg" {
   name     = "db-resource-group"
-  location = "West US"
+  location = "eastus"
 }
 
 # Define the MySQL server
