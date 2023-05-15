@@ -70,9 +70,8 @@ resource "azurerm_lb_probe" "desafio" {
 # Define the load balancer rule
 resource "azurerm_lb_rule" "desafio" {
   name                           = "desafio-lbrule"
-  resource_group_name            = azurerm_resource_group.desafio.name
   loadbalancer_id                = azurerm_lb.desafio-lb.id
-  backend_address_pool_id        = azurerm_lb_backend_address_pool.desafio.id
+  backend_address_pool_ids        = azurerm_lb_backend_address_pool.desafio.id
   backend_port                   = 80
   frontend_ip_configuration_name = azurerm_lb.desafio-lb.frontend_ip_configuration[0].name
   frontend_port = 80
