@@ -153,7 +153,7 @@ resource "azurerm_linux_virtual_machine" "desafio_web_server" {
     approle     = "web-server"
   }
 }
-/*
+
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "desafio-nsg" {
   name                = "desafio-nsg"
@@ -182,4 +182,5 @@ resource "azurerm_subnet_network_security_group_association" "desafio-nsg-assoc"
   subnet_id                 = azurerm_subnet.desafio-subnet.id
   network_security_group_id = azurerm_network_security_group.desafio-nsg.id
 }
-*/
+
+
