@@ -70,7 +70,7 @@ resource "azurerm_lb_probe" "desafio" {
 }
 
 # Define the load balancer rule
-resource "azurerm_lb_rule" "desafio" {
+resource "azurerm_lb_rule" "desafio-1" {
   name                           = "desafio-lbrule"
   loadbalancer_id                = azurerm_lb.desafio-lb.id
   resource_group_name            = azurerm_resource_group.desafio.name
@@ -83,7 +83,7 @@ resource "azurerm_lb_rule" "desafio" {
 }
 
 # Define the load balancer rule for ssh
-resource "azurerm_lb_rule" "desafio" {
+resource "azurerm_lb_rule" "desafio-2" {
   name                           = "ssh-inbound-rule"
   loadbalancer_id                = azurerm_lb.desafio-lb.id
   resource_group_name            = azurerm_resource_group.desafio.name
