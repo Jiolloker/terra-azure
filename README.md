@@ -45,7 +45,7 @@ Copy the value of the "Subscription ID" field. This value is your subscription_i
 ```
 These values, must be stored as variables in terraform cloud, store them as sensitive variables.
 
-![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/azure%20diagram.JPG)
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/variables.JPG)
 
 Then, we need to give permissions to the client we created so it can access the resources in azure.
 ```
@@ -59,7 +59,9 @@ Secondly, search for and select the name of the client created in Azure Active D
 
 
 Current infrastructure diagram
-![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/variables.JPG)
+
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/azure%20diagram.JPG)
+
 
 # Despliegue
 ```
