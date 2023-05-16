@@ -100,7 +100,7 @@ resource "azurerm_lb_rule" "desafio-1" {
   protocol                       = "Tcp"
   probe_id                       = azurerm_lb_probe.desafio1.id
 }
-
+/*
 # Define the load balancer rule for ssh
 resource "azurerm_lb_rule" "desafio-2" {
   name                           = "ssh-inbound-rule"
@@ -111,7 +111,7 @@ resource "azurerm_lb_rule" "desafio-2" {
   frontend_port                  = 22
   protocol                       = "Tcp"
   probe_id                       = azurerm_lb_probe.desafio.id
-}
+}*/
 
 
 # Associate the network interface with the load balancer backend pool
