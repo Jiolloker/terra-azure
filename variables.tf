@@ -18,7 +18,7 @@ variable "tenant_id" {
 # Define the number of web servers to create
 variable "web_server_count" {
   type    = number
-  default = 3
+  default = 2
 }
 
 variable "admin_ssh_key" {
