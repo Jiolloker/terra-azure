@@ -64,7 +64,10 @@ Current infrastructure diagram
 Se depliega a traves de terraform cloud, creando un nuevo workspace y linkeando el repositorio al workspace.
 Luego se debe asignar las variables requeridas por el codigo.
 ```
+
 ![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/variables2.JPG)
+
+
 ```
 Y con esto ya esta listo para desplegar.
 ```
@@ -104,9 +107,10 @@ ansible-playbook playbook.yml
 Terraform Cloud
 ![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/terraform%20cloud%20deploy1.JPG)
 ![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/terraform%20cloud%20deploy2.JPG)
-![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/azure%20rg%20confirm.JPG)
+
 
 Azure Portal
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/azure%20rg%20confirm.JPG)
 ![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/1.jpg)
 ![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/2.JPG)
 
