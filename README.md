@@ -44,7 +44,7 @@ Select the desired subscription from the list of subscriptions.
 Copy the value of the "Subscription ID" field. This value is your subscription_id.
 ```
 These values, must be stored as variables in terraform cloud, store them as sensitive variables.
-![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/variables.JPG)
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/azure%20diagram.JPG)
 Then, we need to give permissions to the client we created so it can access the resources in azure.
 ```
 In azure portal, go to subscriptions, select a subscription you want to use, then click Access Control (IAM), and finally Add > Add role assignment.
@@ -57,14 +57,14 @@ Secondly, search for and select the name of the client created in Azure Active D
 
 
 Current infrastructure diagram
-https://app.diagrams.net/#G1dEtuOnt5_SV-WMKldVLZSnGoVQf9RGvC
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/variables.JPG)
 
 # Despliegue
 ```
 Se depliega a traves de terraform cloud, creando un nuevo workspace y linkeando el repositorio al workspace.
 Luego se debe asignar las variables requeridas por el codigo.
 ```
-img
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/variables2.JPG)
 ```
 Y con esto ya esta listo para desplegar.
 ```
@@ -99,3 +99,18 @@ ansible-inventory --list
 ansible all -m ping
 ansible-playbook playbook.yml
 ```
+
+# Resultados
+Terraform Cloud
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/terraform%20cloud%20deploy1.JPG)
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/terraform%20cloud%20deploy2.JPG)
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/azure%20rg%20confirm.JPG)
+
+Azure Portal
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/1.jpg)
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/2.JPG)
+
+Ansible output
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/ping.JPG)
+![Alt text](https://github.com/Jiolloker/terra-azure/blob/master/img/playbook.JPG)
+
