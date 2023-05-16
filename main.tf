@@ -39,7 +39,8 @@ resource "azurerm_public_ip" "desafio-publicip" {
   name                = "desafio-publicip"
   location            = azurerm_resource_group.desafio.location
   resource_group_name = azurerm_resource_group.desafio.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
+  sku = "Standard"
 }
 
 # Define the load balancer
@@ -47,7 +48,7 @@ resource "azurerm_lb" "desafio-lb" {
   name                = "desafio-lb"
   location            = azurerm_resource_group.desafio.location
   resource_group_name = azurerm_resource_group.desafio.name
-
+  sku                 = "Standard"
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
     public_ip_address_id = azurerm_public_ip.desafio-publicip.id
@@ -58,6 +59,9 @@ resource "azurerm_lb" "desafio-lb" {
 resource "azurerm_lb_backend_address_pool" "desafio" {
   name            = "desafio-backendpool"
   loadbalancer_id = azurerm_lb.desafio-lb.id
+  depends_on = [ 
+    azurerm_public_ip.desafio-publicip
+   ]
 }
 
 # Define the probe
@@ -66,6 +70,12 @@ resource "azurerm_lb_probe" "desafio" {
   loadbalancer_id = azurerm_lb.desafio-lb.id
   protocol        = "Tcp"
   port            = 22
+}
+
+resource "azurerm_lb_probe" "desafio1" {
+  name            = "probeB"
+  loadbalancer_id = azurerm_lb.desafio-lb.id
+  port            = 80
 }
 
 # Define the load balancer rule
@@ -77,7 +87,7 @@ resource "azurerm_lb_rule" "desafio-1" {
   frontend_ip_configuration_name = azurerm_lb.desafio-lb.frontend_ip_configuration[0].name
   frontend_port                  = 80
   protocol                       = "Tcp"
-  probe_id                       = azurerm_lb_probe.desafio.id
+  probe_id                       = azurerm_lb_probe.desafio1.id
 }
 
 # Define the load balancer rule for ssh
