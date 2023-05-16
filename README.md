@@ -1,5 +1,6 @@
 # terra-azure
 
+# Credentials
 To obtain the values for subscription_id, client_id, client_secret, and tenant_id in the Azure portal, follow these steps:
 ```
 Sign in to the Azure portal at https://portal.azure.com/.
@@ -55,5 +56,44 @@ Secondly, search for and select the name of the client created in Azure Active D
 
 
 
-Current infra diagram
+Current infrastructure diagram
 https://app.diagrams.net/#G1dEtuOnt5_SV-WMKldVLZSnGoVQf9RGvC
+
+# Despliegue
+```
+Se depliega a traves de terraform cloud, creando un nuevo workspace y linkeando el repositorio al workspace.
+Luego se debe asignar las variables requeridas por el codigo.
+img
+Y con esto ya esta listo para desplegar.
+```
+# Ansible
+```
+Instalar AZURE CLI 
+
+Login a az, usando az login
+
+Instalar modulos requeridos por ansible para conectarse a Azure.
+
+pip install msrest
+
+pip install msrestazure
+
+pip install azure-common
+
+export env variables para conectarse a azure
+
+export AZURE_CLIENT_ID=********************
+
+export AZURE_SECRET=********************
+
+export AZURE_SUBSCRIPTION_ID=********************
+
+export AZURE_TENANT=********************
+
+Luego ya podemos ver si podemos recursos de azure.
+
+ansible-inventory --graph
+ansible-inventory --list
+ansible all -m ping
+ansible-playbook playbook.yml
+```
