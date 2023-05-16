@@ -197,6 +197,20 @@ resource "azurerm_network_security_group" "desafio-nsg" {
 
 }
 
+resource "azurerm_network_security_rule" "TCP-sg-rule" {
+  name                        = "TCP"
+  priority                    = 1002
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "80"
+  destination_port_range      = "80"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = azurerm_resource_group.desafio.name
+  network_security_group_name = azurerm_network_security_group.desafio-nsg.name
+}
+
 
 #Connect NSG to Subnet
 resource "azurerm_subnet_network_security_group_association" "desafio-nsg-assoc" {
