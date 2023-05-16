@@ -31,12 +31,23 @@ resource "azurerm_network_interface" "desafio_template" {
     name                          = "desafio-ipconfig-${count.index}"
     subnet_id                     = azurerm_subnet.desafio-subnet.id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.webservers-ip[count.index].id
   }
 }
+
 
 # Define the public IP address
 resource "azurerm_public_ip" "desafio-publicip" {
   name                = "desafio-publicip"
+  location            = azurerm_resource_group.desafio.location
+  resource_group_name = azurerm_resource_group.desafio.name
+  allocation_method   = "Static"
+  sku = "Standard"
+}
+
+resource "azurerm_public_ip" "webservers-ip" {
+  count = var.web_server_count
+  name                = "webservers-ip-${count.index}"
   location            = azurerm_resource_group.desafio.location
   resource_group_name = azurerm_resource_group.desafio.name
   allocation_method   = "Static"
