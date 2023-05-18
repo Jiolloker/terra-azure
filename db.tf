@@ -6,7 +6,7 @@ resource "azurerm_mysql_server" "db-server" {
   version             = "5.7" # Choose the desired MySQL version
 
 
-  sku_name = "GP_Gen5_1"
+  sku_name = "GP_Gen4_2"
 
 
 
