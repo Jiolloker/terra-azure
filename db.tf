@@ -40,7 +40,7 @@ resource "random_pet" "prefix" {
 resource "azurerm_private_endpoint" "private-endpoint" {
   name                = "${random_pet.prefix.id}-endpoint"
   location            = "eastus"
-  resource_group_name = "MysqlResourceGroup"
+  resource_group_name = azurerm_resource_group.desafio.name
   subnet_id           = azurerm_subnet.desafio-subnet.id
 
   private_service_connection {
