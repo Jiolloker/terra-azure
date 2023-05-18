@@ -44,7 +44,7 @@ resource "azurerm_private_endpoint" "private-endpoint" {
   subnet_id           = azurerm_subnet.desafio-subnet.id
 
   private_service_connection {
-    name                           = "${random_string.random.result}-privateserviceconnection"
+    name                           = "${random_pet.prefix.id}-privateserviceconnection"
     private_connection_resource_id = azurerm_mysql_server.db-server.id
     subresource_names              = [ "mysqlServer" ]
     is_manual_connection           = false

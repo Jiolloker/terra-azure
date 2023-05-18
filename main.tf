@@ -18,7 +18,7 @@ resource "azurerm_subnet" "desafio-subnet" {
   resource_group_name  = azurerm_resource_group.desafio.name
   virtual_network_name = azurerm_virtual_network.desafio-vnet.name
   address_prefixes     = ["10.0.1.0/24"]
-  enforce_private_link_endpoint_network_policies = true
+  private_endpoint_network_policies_enabled = true
 }
 
 # Define the network interface template
