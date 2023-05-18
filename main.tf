@@ -18,6 +18,7 @@ resource "azurerm_subnet" "desafio-subnet" {
   resource_group_name  = azurerm_resource_group.desafio.name
   virtual_network_name = azurerm_virtual_network.desafio-vnet.name
   address_prefixes     = ["10.0.1.0/24"]
+  enforce_private_link_endpoint_network_policies = true
 }
 
 # Define the network interface template
@@ -111,8 +112,8 @@ resource "azurerm_lb_rule" "desafio-2" {
   frontend_port                  = 22
   protocol                       = "Tcp"
   probe_id                       = azurerm_lb_probe.desafio.id
-}*/
-
+}
+*/
 
 # Associate the network interface with the load balancer backend pool
 resource "azurerm_network_interface_backend_address_pool_association" "web_nic_lb_associate" {
