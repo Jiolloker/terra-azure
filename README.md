@@ -99,7 +99,7 @@ export AZURE_SUBSCRIPTION_ID=********************
 
 export AZURE_TENANT=********************
 
-Luego ya podemos ver si podemos recursos de azure.
+Luego ya podemos ver si podemos conectar con recursos de azure.
 
 ansible-inventory --graph
 ansible-inventory --list
